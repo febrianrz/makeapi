@@ -3,24 +3,15 @@ Make API
 
 ## Installasi
 ```bash
-composer require febrianrz/micromidlleware
+composer require febrianrz/makeapi
 ```
 
 ## Penggunaan
-* Pada file app/Http/Kernel.php pada bagian $routeMiddleware tambahkan
+* Via CLI
 ```bash
-'auth.micro'    => \Febrianrz\Micromidlleware\MicroAuthenticate::class,
-'auth.micro-app'=> \Febrianrz\Micromidlleware\MicroAppAuthenticate::class,
+php artisan make:api NamaModel
 ```
-* Pada bagian api.php, gunakan middleware 
-```bash
-Route::middleware('auth.micro')
-```
-* Pada setiap request, data user dapat digunakan dengan cara
-```bash
-$request->user
-```
-* Lakukan publish configurasi dengan perintah
-```bash
-php artisan vendor:publish
+* Selanjutnya, buka file App/Console/Kernel.php, pada bagian  protected $commands tambahkan:
+```php
+\Febrianrz\Makeapi\ApiMakeCommand::class
 ```
