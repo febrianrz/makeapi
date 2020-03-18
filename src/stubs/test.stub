@@ -1,0 +1,112 @@
+<?php
+
+namespace Tests\Feature\Api;
+
+use DataTables;
+use App\User;
+use App\ModelName;
+use Tests\TestCase;
+use Laravel\Passport\Passport;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+class ModelNameTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $user = factory(User::class)->state('superuser')->create();
+
+        Passport::actingAs($user);
+    }
+
+    public function testList()
+    {
+        factory(ModelName::class, 5)->create();
+
+        $response = $this->json('get', '/api/PluralDashName');
+
+        $expectedJson = DataTables::of(ModelName::query())->toArray();
+        unset($expectedJson['queries']);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson($expectedJson);
+    }
+
+    public function testCreate()
+    {
+        $response = $this->json('post', '/api/PluralDashName', [
+            'name' => 'name',
+        ]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'message' => "TitleName [name] berhasil dibuat",
+                'data' => [
+                    'name' => 'name',
+                ],
+            ]);
+    }
+
+    public function testView()
+    {
+        $VariableName = ModelName::create([
+            'name' => 'name',
+        ]);
+
+        $response = $this->json('get', "/api/PluralDashName/{$VariableName->id}");
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'data' => [
+                    'id' => $VariableName->id,
+                    'name' => 'name',
+                ],
+            ]);
+    }
+
+    public function testUpdate()
+    {
+        $VariableName = ModelName::create([
+            'name' => 'name',
+        ]);
+
+        $response = $this->json('put', "/api/PluralDashName/{$VariableName->id}", [
+            'name' => 'name zzz',
+        ]);
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'message' => "TitleName [name] berhasil diubah",
+                'data' => [
+                    'id' => $VariableName->id,
+                    'name' => 'name zzz',
+                ],
+            ]);
+    }
+
+    public function testDelete()
+    {
+        $VariableName = ModelName::create([
+            'name' => 'name',
+        ]);
+
+        $response = $this->json('delete', "/api/PluralDashName/{$VariableName->id}");
+
+        $response
+            ->assertStatus(200)
+            ->assertJson([
+                'message' => "TitleName [name] berhasil dihapus",
+                'data' => [
+                    'id' => $VariableName->id,
+                    'name' => 'name',
+                ],
+            ]);
+    }
+}

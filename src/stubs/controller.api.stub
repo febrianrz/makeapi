@@ -1,0 +1,152 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use DataTables;
+use App\ModelName;
+use Febrianrz\Makeapi\Select2;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
+
+class ModelNameController extends Controller
+{
+    protected $model = ModelName::class;
+
+    protected $relationships = [];
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        $query = ModelName::query();
+
+        $this->loadRelationships($query);
+
+        switch ($request->format) {
+            case 'select2':
+                return Select2::of(
+                    $query->orderBy('id'),
+                    'name',
+                    'id'
+                );
+
+            default:
+                return DataTables::of($query)
+                    ->addColumn('urls', function ($VariableName) {
+                        $urls = [];
+
+                        if (Auth::user()->can('update', $VariableName)) {
+                            $urls['edit'] = route('api.PluralDashName.update', [
+                                'SnakeName' => $VariableName->id
+                            ]);
+                        }
+
+                        if (Auth::user()->can('delete', $VariableName)) {
+                            $urls['delete'] = route('api.PluralDashName.destroy', [
+                                'SnakeName' => $VariableName->id
+                            ]);
+                        }
+
+                        return $urls;
+                    })
+                    ->with('urls', function () {
+                        $urls = [];
+
+                        if (Auth::user()->can('create', ModelName::class)) {
+                            $urls['create'] = route('api.PluralDashName.store');
+                        }
+
+                        return $urls;
+                    })
+                    ->toJson();
+        }
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $VariableName = new ModelName();
+
+        $VariableName->fill(
+            $request->only([
+                'name',
+            ])
+        );
+
+        $VariableName->save();
+
+        return [
+            'message' => "TitleName [{$VariableName->name}] berhasil dibuat",
+            'data' => $VariableName,
+        ];
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        $VariableName = ModelName::find($id);
+
+        $this->loadRelationships($VariableName);
+
+        return ['data' => $VariableName];
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        $VariableName = ModelName::find($id);
+        $name = $VariableName->name;
+
+        $VariableName->fill(
+            $request->only([
+                'name',
+            ])
+        );
+
+        $VariableName->save();
+
+        return [
+            'message' => "TitleName [{$name}] berhasil diubah",
+            'data' => $VariableName,
+        ];
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @return \Illuminate\Http\Response
+     * @param  int  $id
+     */
+    public function destroy($id)
+    {
+        $VariableName = ModelName::find($id);
+
+        $VariableName->delete();
+
+        return [
+            'message' => "TitleName [{$VariableName->name}] berhasil dihapus",
+            'data' => $VariableName,
+        ];
+    }
+}

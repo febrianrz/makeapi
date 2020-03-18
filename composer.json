@@ -1,0 +1,24 @@
+{
+    "name": "febrianrz/makeapi",
+    "description": "Make Api",
+    "authors": [
+        {
+            "name": "febrian reza",
+            "email": "febrianrz@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Febrianrz\\Makeapi\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Febrianrz\\Makeapi\\MakeapiServiceProvider"
+            ]
+        }
+    },
+    "prefer-stable": true
+}
