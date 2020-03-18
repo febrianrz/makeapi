@@ -1,6 +1,10 @@
 # micromiddleware
 Make API
 
+## Dependency
+* Yajra datatable
+* webpatser/laravel-uuid
+
 ## Installasi
 ```bash
 composer require febrianrz/makeapi

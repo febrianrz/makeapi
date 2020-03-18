@@ -38,6 +38,7 @@ class ApiMakeCommand extends Command
         'factory',
         'migration',
         'model',
+        'resource',
         'policy',
         'request',
         'seeder',
@@ -83,6 +84,8 @@ class ApiMakeCommand extends Command
             ['x-seeder', 's', InputOption::VALUE_NONE, 'Create an API without new seeder file for the model'],
 
             ['x-test', 't', InputOption::VALUE_NONE, 'Create an API without new test file for the model'],
+
+            ['x-resource', 'R', InputOption::VALUE_NONE, 'Create an API without new resource file'],
 
             // phpcs:ignore
             ['x-test.unauthorized', 'u', InputOption::VALUE_NONE, 'Create an API without new unauthorized test file for the model'],
@@ -137,6 +140,7 @@ class ApiMakeCommand extends Command
         $this->paths['factory'] = "factories/{$this->modelName}Factory.php";
         $this->paths['seeder'] = "seeds/{$this->pluralName}Seeder.php";
         $this->paths['model'] = "app/{$this->modelName}.php";
+        $this->paths['resource'] = "app/Http/Resources/{$this->modelName}Resource.php";
         $this->paths['policy'] = "app/Policies/{$this->modelName}Policy.php";
         $this->paths['request'] = "app/Http/Requests/{$this->modelName}Request.php";
         $this->paths['test'] = "tests/Feature/Api/{$this->modelName}Test.php";
@@ -265,6 +269,7 @@ class ApiMakeCommand extends Command
 
             case 'controller':
             case 'model':
+            case 'resource':
             case 'policy':
             case 'request':
             case 'test':
@@ -278,6 +283,7 @@ class ApiMakeCommand extends Command
             app_path()."/Http/Controllers/Api",
             app_path()."/Policies",
             app_path()."/Http/Requests",
+            app_path()."/Http/Resources",
             base_path()."/tests/Feature/Api",
         ];
         // dd($paths);

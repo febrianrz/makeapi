@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ModelNameRequest;
+use App\Http\Resources\ModelNameResource;
+use Febrianrz\Makeapi\Helpers\MAHelper;
 
 class ModelNameController extends Controller
 {
@@ -36,7 +38,7 @@ class ModelNameController extends Controller
                     'id'
                 );
 
-            default:
+            case "datatable":
                 return DataTables::of($query)
                     ->addColumn('urls', function ($VariableName) {
                         $urls = [];
@@ -65,6 +67,9 @@ class ModelNameController extends Controller
                         return $urls;
                     })
                     ->toJson();
+            default:
+                    MAHelper::filter($request,$query);
+                    return ModelNameResource::collection($query->paginate());
         }
     }
 
